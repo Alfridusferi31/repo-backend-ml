@@ -1,53 +1,94 @@
 const Hapi = require("@hapi/hapi");
-const { loadModel, predictImage } = require("./inference"); // Mengimpor model dan fungsi prediksi
-const { storePrediction } = require("../utils/firestore"); // Mengimpor fungsi untuk menyimpan hasil prediksi ke Firestore
+const { nanoid } = require("nanoid");
+const { loadModel, predictImage } = require("./inference"); // Fungsi untuk memuat model dan prediksi
+const { storePrediction } = require("../utils/firestore"); // Fungsi untuk menyimpan data ke Firestore
 
 (async () => {
-  // Memuat dan mendapatkan model machine learning
+  // Memuat model machine learning dari Cloud Storage
   const model = await loadModel();
   console.log("Model loaded!");
 
-  // Inisialisasi server HTTP
+  // Inisialisasi server Hapi
   const server = Hapi.server({
     host: process.env.NODE_ENV !== "production" ? "localhost" : "0.0.0.0",
     port: 3000,
   });
 
-  // Definisikan rute untuk endpoint prediksi
+  // Definisi endpoint POST /predict
   server.route({
     method: "POST",
-    path: "/predicts",
-    handler: async (request) => {
-      // Ambil gambar yang di-upload oleh pengguna
-      const { image } = request.payload;
+    path: "/predict",
+    handler: async (request, h) => {
+      try {
+        const { image } = request.payload;
 
-      // Lakukan prediksi dengan memberikan model dan gambar
-      const { result, suggestion } = await predictImage(model, image);
+        // Lakukan prediksi
+        const { result, suggestion } = await predictImage(model, image);
 
-      // Menyimpan hasil prediksi ke Firestore
-      const predictionData = {
-        result,
-        suggestion,
-        createdAt: new Date().toISOString(),
-      };
-      await storePrediction(predictionData);
+        // Buat data prediksi
+        const id = nanoid(); // Generate ID unik
+        const predictionData = {
+          id,
+          result,
+          suggestion,
+          createdAt: new Date().toISOString(),
+        };
 
-      // Mengembalikan hasil prediksi
-      return {
-        status: "success",
-        message: "Prediction made successfully",
-        data: predictionData,
-      };
+        // Simpan hasil prediksi ke Firestore
+        await storePrediction(predictionData);
+
+        // Kembalikan respons sukses
+        return h
+          .response({
+            status: "success",
+            message: "Model is predicted successfully",
+            data: predictionData,
+          })
+          .code(200);
+      } catch (error) {
+        console.error("Prediction Error:", error);
+
+        // Jika terjadi kesalahan saat prediksi
+        return h
+          .response({
+            status: "fail",
+            message: "Terjadi kesalahan dalam melakukan prediksi",
+          })
+          .code(400);
+      }
     },
     options: {
       payload: {
-        allow: "multipart/form-data", // Izinkan multipart untuk upload file
-        multipart: true, // Menyokong multipart untuk menerima file gambar
+        allow: "multipart/form-data", // Izinkan pengunggahan file
+        multipart: true, // Aktifkan parsing multipart
+        output: "stream", // Gunakan stream untuk membaca file
+        maxBytes: 1000000, // Batasi ukuran file maksimal 1MB
+        parse: true,
+      },
+      ext: {
+        onPreResponse: {
+          method: (request, h) => {
+            // Penanganan kesalahan jika file melebihi ukuran maksimal
+            if (
+              request.response.isBoom &&
+              request.response.output.statusCode === 413
+            ) {
+              return h
+                .response({
+                  status: "fail",
+                  message:
+                    "Payload content length greater than maximum allowed: 1000000",
+                })
+                .code(413);
+            }
+            return h.continue;
+          },
+        },
       },
     },
   });
 
-  // Menjalankan server
+  // Jalankan server
   await server.start();
   console.log(`Server started at: ${server.info.uri}`);
 })();
