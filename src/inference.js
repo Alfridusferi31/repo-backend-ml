@@ -7,7 +7,7 @@ let model;
 async function loadModel() {
   if (!model) {
     const storage = new Storage();
-    const bucket = storage.bucket("your-bucket-name"); // Ganti dengan nama bucket Anda
+    const bucket = storage.bucket(" ml-training-model"); // Ganti dengan nama bucket Anda
     const modelFile = path.join("/tmp", "model.json");
 
     // Download model dari Google Cloud Storage
