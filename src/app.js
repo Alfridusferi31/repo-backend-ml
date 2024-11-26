@@ -1,6 +1,6 @@
 const Hapi = require("@hapi/hapi");
 const { loadModel, predictImage } = require("./inference"); // Mengimpor model dan fungsi prediksi
-const { storePrediction } = require("./utils/firestore"); // Mengimpor fungsi untuk menyimpan hasil prediksi ke Firestore
+const { storePrediction } = require("../utils/firestore"); // Mengimpor fungsi untuk menyimpan hasil prediksi ke Firestore
 
 (async () => {
   // Memuat dan mendapatkan model machine learning
