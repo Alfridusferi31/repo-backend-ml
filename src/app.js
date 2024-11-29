@@ -1,7 +1,7 @@
-const Hapi = require("@hapi/hapi");
-import { nanoid } from 'nanoid';
-const { loadModel, predictImage } = require("./inference"); // Fungsi untuk memuat model dan prediksi
-const { storePrediction } = require("../utils/firestore"); // Fungsi untuk menyimpan data ke Firestore
+import Hapi from "@hapi/hapi";
+import { nanoid } from "nanoid";
+import { loadModel, predictImage } from "./inference";
+import { storePrediction } from "../utils/firestore";
 
 (async () => {
   // Memuat model machine learning dari Cloud Storage
