@@ -2,10 +2,9 @@ import { Storage } from "@google-cloud/storage";
 import * as tf from "@tensorflow/tfjs-node";
 import path from "path";
 
-
 let model;
 
-async function loadModel() {
+export async function loadModel() {
   if (!model) {
     const storage = new Storage();
     const bucket = storage.bucket("model-ml-server"); // Pastikan nama bucket sesuai
@@ -39,7 +38,7 @@ async function loadModel() {
   return model;
 }
 
-async function predictImage(model, image) {
+export async function predictImage(model, image) {
   try {
     const imageBuffer = image._data;
 
@@ -65,5 +64,3 @@ async function predictImage(model, image) {
     throw new Error("Gagal memproses gambar untuk prediksi.");
   }
 }
-
-module.exports = { loadModel, predictImage };
