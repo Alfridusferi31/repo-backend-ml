@@ -22,4 +22,5 @@
     "@tensorflow/tfjs-node": "^4.22.0",
     "nanoid": "^5.0.9"
   }
+   "type": "module"
 }
