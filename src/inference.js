@@ -12,11 +12,11 @@ async function loadModel() {
 
     // Daftar file yang perlu diunduh
     const files = [
-      "model/model.json",
-      "model/group1-shard1of4.bin",
-      "model/group1-shard2of4.bin",
-      "model/group1-shard3of4.bin",
-      "model/group1-shard4of4.bin",
+      "model-in-prod/model.json",
+      "model-in-prod/group1-shard1of4.bin",
+      "model-in-prod/group1-shard2of4.bin",
+      "model-in-prod/group1-shard3of4.bin",
+      "model-in-prod/group1-shard4of4.bin",
     ];
 
     console.log("Mengunduh file model...");
