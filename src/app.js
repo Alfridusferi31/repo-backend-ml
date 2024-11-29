@@ -1,6 +1,6 @@
 import Hapi from "@hapi/hapi";
 import { nanoid } from "nanoid";
-import { loadModel, predictImage } from "./inference";
+import { loadModel, predictImage } from "./inference.js"; // Pastikan untuk menambahkan .js karena menggunakan ES Modules
 import { storePrediction } from "../utils/firestore";
 
 (async () => {
