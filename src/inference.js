@@ -7,7 +7,7 @@ let model;
 async function loadModel() {
   if (!model) {
     const storage = new Storage();
-    const bucket = storage.bucket("ml-training-model"); // Pastikan nama bucket sesuai
+    const bucket = storage.bucket("model-ml-server"); // Pastikan nama bucket sesuai
     const modelDir = "/tmp";
 
     // Daftar file yang perlu diunduh
