@@ -1,5 +1,5 @@
 const Hapi = require("@hapi/hapi");
-const { nanoid } = require("nanoid");
+import { nanoid } from 'nanoid';
 const { loadModel, predictImage } = require("./inference"); // Fungsi untuk memuat model dan prediksi
 const { storePrediction } = require("../utils/firestore"); // Fungsi untuk menyimpan data ke Firestore
 
