@@ -1,6 +1,7 @@
-const { Storage } = require("@google-cloud/storage");
-const tf = require("@tensorflow/tfjs-node");
-const path = require("path");
+import { Storage } from "@google-cloud/storage";
+import * as tf from "@tensorflow/tfjs-node";
+import path from "path";
+
 
 let model;
 
